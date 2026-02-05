@@ -57,7 +57,22 @@ public:
 		bufOp.autoRewind = true;
 		buffer.SetOptions(0, &bufOp);
 	}
-	void StopSetup()
+	void ShowStatus(int n)
+	{
+		system("cls");
+		switch (n)
+		{
+		case 1:
+			cout << "Running..." << endl;
+			break;
+		case 2:
+			cout << "Stop" << endl;
+			break;
+		case 3:
+			cout << "Exit" << endl;
+		}
+	}
+	void EndSetup()
 	{
 		// 통신 해제, 디바이스 삭제
 		wmxlib.StopCommunication();
@@ -161,14 +176,21 @@ public:
 		pvt[1].points[4].velocity = 0;
 		pvt[1].points[4].timeMilliseconds = 1050;
 	}
-	unsigned char GetStorBit(void)
+	int GetStatusBit(void)
 	{
 		unsigned char data;
-		ioData.GetOutBit(0, 0, &data);
-		return data;
+		ioData.GetOutByte(0, &data);
+		if (data == 0)
+			return 0;
+		return log2(data) + 1;
+	}
+	void ResetStatusBit(void)
+	{
+		// 전체 bit off
+		ioData.SetOutByte(0, 0);
 	}
 	void StartMotion()
-	{	
+	{
 		// 0번 모터 모션 실행
 		err = cMotion.motion->StartPVT(&pvt[0]);
 		if (err != ErrorCode::None)
@@ -188,7 +210,7 @@ public:
 		cMotion.motion->Wait(0);
 		cMotion.motion->Wait(1);
 	}
-	void StartCutMotion()
+	void SetCutMotion()
 	{
 		err = buffer.StartRecordBufferChannel(0);
 		if (err != ErrorCode::None)
@@ -216,7 +238,5 @@ public:
 		buffer.Wait(0);
 		buffer.Sleep(50);
 		buffer.EndRecordBufferChannel();
-
-		buffer.Execute(0);
 	}
 };

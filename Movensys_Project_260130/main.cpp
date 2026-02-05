@@ -1,50 +1,62 @@
 ﻿/*
     260130 시작
-    
+
 */
 #include "Handler.h"
 
 int main()
 {
     Handler handler;
-    bool flag = true;
-
-    while (1)
+    int statusFlag = 0;
+    int bitNum = 0;
+    try
     {
-        try
+        // 디바이스 생성, 통신 시작
+        handler.StartSetup();
+        // 프로파일 생성
+        handler.SetPVTProfile();
+        // 서보 on
+        handler.ServoOn();
+        // 모션 설정
+        handler.SetCutMotion();
+        statusFlag = 1;
+        while (1)
         {
-            if (flag)
-            {
-                // 디바이스 생성, 통신 시작
-                handler.StartSetup();
-                // 프로파일 생성
-                handler.SetPVTProfile();
-                // 서보 on
-                handler.ServoOn();
-                // 모션 구동
-                handler.StartCutMotion();
             //handler.StartMotion();
-                flag = false;
+            bitNum = handler.GetStatusBit();
+
+            if (bitNum == 1 && statusFlag == 1)
+            {
+                handler.buffer.Execute(0);
+                statusFlag = 2;
+                handler.ShowStatus(bitNum);
             }
-            if (handler.GetStorBit())
+
+            else if (bitNum == 2 && statusFlag == 2)
+            {
                 handler.buffer.Halt(0);
-        }
-        catch (int err)
-        {
-            // 예외 발생 시 초기화 후 에러코드 출력
-            printf(" Error : %d", err);
-            cin.get();
-            handler.StopServo();
-            handler.StopSetup();
-            flag = true;
-            system("cls");
-            continue;
+                statusFlag = 1;
+                handler.ShowStatus(bitNum);
+            }
+
+            else if (bitNum == 3)
+            {
+                handler.ShowStatus(bitNum);
+                break;
+            }
+
+            if (bitNum != 0)
+                handler.ResetStatusBit();
         }
     }
+    catch (int err)
+    {
+        // 예외 발생 시 에러코드 출력
+        printf(" Error : %d", err);
+        cin.get();
+    }
     handler.StopServo();
-    handler.StopSetup();
-    printf("Exit \n");
+    handler.EndSetup();
     return 0;
-
 }
 
