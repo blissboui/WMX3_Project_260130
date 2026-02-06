@@ -13,28 +13,28 @@ int main()
     {
         // 디바이스 생성, 통신 시작
         handler.StartSetup();
-        // 프로파일 생성
-        handler.SetPVTProfile();
         // 서보 on
-        handler.ServoOn();
+        handler.ServoOn(0, 1);
+        // 프로파일 생성
+        handler.SetPVTProfile(0);
+        handler.SetMovProfile(1);
         // 모션 설정
-        handler.SetCutMotion();
+        handler.SetApiBufCutMotion();
         statusFlag = 1;
         while (1)
         {
-            //handler.StartMotion();
             bitNum = handler.GetStatusBit();
 
             if (bitNum == 1 && statusFlag == 1)
             {
-                handler.buffer.Execute(0);
+                handler.ExecuteApi(0);
                 statusFlag = 2;
                 handler.ShowStatus(bitNum);
             }
 
             else if (bitNum == 2 && statusFlag == 2)
             {
-                handler.buffer.Halt(0);
+                handler.HaltApi(0);
                 statusFlag = 1;
                 handler.ShowStatus(bitNum);
             }
@@ -55,7 +55,7 @@ int main()
         printf(" Error : %d", err);
         cin.get();
     }
-    handler.StopServo();
+    handler.ServoOff(0, 1);
     handler.EndSetup();
     return 0;
 }

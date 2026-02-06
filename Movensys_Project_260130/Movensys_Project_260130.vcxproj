@@ -129,11 +129,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ApiBuf.cpp" />
+    <ClCompile Include="EngineCtrl.cpp" />
+    <ClCompile Include="Handler.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MotionProfile.cpp" />
+    <ClCompile Include="MotorCtrl.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ApiBuf.h" />
+    <ClInclude Include="EngineCtrl.h" />
     <ClInclude Include="Handler.h" />
     <ClInclude Include="IncludeApi.h" />
+    <ClInclude Include="MotorCtrl.h" />
+    <ClInclude Include="MotionProfile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

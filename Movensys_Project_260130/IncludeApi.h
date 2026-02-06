@@ -11,3 +11,9 @@
 #include "UserMemoryApi.h"
 #include "WMX3Api.h"
 #include <iostream>
+
+using namespace wmx3Api;
+using namespace std;
+
+extern int err;
+extern char errString[256];
